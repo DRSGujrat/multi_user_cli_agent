@@ -1,3 +1,5 @@
+# This file is for testinn purposes only
+
 from .database.UserManager import UserManager
 from .database.MemoryManager import MemoryManager
 from .database.UserDBSchema import SQLiteDB

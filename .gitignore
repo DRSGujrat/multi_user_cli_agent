@@ -2,3 +2,4 @@ keys.env
 ml_env/
 __pycache__/
 .ipynb_checkpoints/
+*.db

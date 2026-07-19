@@ -31,16 +31,19 @@ inp = 'test'
 # mm.save_profile(user_id = inp,profile = u1)
 # mm.update_profile_track(user_id=inp,message_id = msg_id)
 
-messages = mm.get_all_messages(inp)
-summary = mm.get_latest_summary(user_id = inp)
+# messages = mm.get_all_messages(inp)
+# summary = mm.get_latest_summary(user_id = inp)
 
-for msg in messages:
-    if isinstance(msg,HumanMessage):
-        print("User :",msg.content)
-    elif isinstance(msg,AIMessage):
-        print("AI :",msg.content)
+# for msg in messages:
+#     if isinstance(msg,HumanMessage):
+#         print("User :",msg.content)
+#     elif isinstance(msg,AIMessage):
+#         print("AI :",msg.content)
 
-print("Summary : ",summary[0].content)
+# print("Summary : ",summary[0].content)
 
+# profile = mm.get_latest_profile(user_id = inp)
+# print(profile)
 
+mm.delete_latest_profile(user_id = inp)
 

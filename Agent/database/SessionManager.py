@@ -27,7 +27,9 @@ class SessionManager:
         
         session_id = self.memory_manager.get_session_id(user_id) +1
         summary = self.memory_manager.get_latest_summary(user_id)
-
+        summary_text = []
+        for summ in summary:
+            summary_text.append(summ.content)
         if summary is None:
             summary = ""
 
@@ -41,7 +43,7 @@ class SessionManager:
 
         return Session(
             session_id=session_id,
-            conversation_summary=summary,
+            conversation_summary=summary_text,
             recent_messages=messages,
             profile=profile,
             

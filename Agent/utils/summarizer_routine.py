@@ -19,8 +19,12 @@ else:
     summary_track_id = mm.get_summary_track(inp)
 
     # Latest stored summary (returns list -> join into one string)
+    summary =  mm.get_latest_summary(inp)
+    summary_text = []
+    for sum in summary:
+        summary_text.append(sum.content)
     previous_summary = "".join(
-        mm.get_latest_summary(inp)
+       summary_text
     )
 
     # Messages after the last summary checkpoint

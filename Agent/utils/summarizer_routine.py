@@ -2,58 +2,55 @@ from .summarizer import summarize
 from ..database.UserDBSchema import SQLiteDB
 from ..database.UserManager import UserManager
 from ..database.MemoryManager import MemoryManager
+from fastapi import HTTPException
 
 
 db = SQLiteDB()
 um = UserManager(db)
 mm = MemoryManager(db)
 
-inp = input("User Id : ")
 
-if not um.user_exists(inp):
-    print("User Does not exist.")
+async def summarizer_routine(user_id):
 
-else:
+    inp = user_id
+
+    if not await um.user_exists(inp):
+        raise HTTPException(status_code=404, detail="User Does not Exist")
 
     # Last summarized message id
-    summary_track_id = mm.get_summary_track(inp)
+    summary_track_id = await mm.get_summary_track(inp)
 
     # Latest stored summary (returns list -> join into one string)
-    summary =  mm.get_latest_summary(inp)
+    summary = await mm.get_latest_summary(inp)
     summary_text = []
     for sum in summary:
         summary_text.append(sum.content)
-    previous_summary = "".join(
-       summary_text
-    )
+    previous_summary = "\n".join(summary_text)
 
     # Messages after the last summary checkpoint
-    message_list = mm.get_messages_after(
+    message_list = await mm.get_messages_after(
         user_id=inp,
         message_id=summary_track_id,
     )
 
     if not message_list:
-        print("Nothing new to summarize.")
-        exit()
+        return
 
     # Latest message id in database
-    last_message_id = mm.get_last_msg_id(inp)
+    last_message_id = await mm.get_last_msg_id(inp)
 
     # Update summary instead of creating a new one
-    updated_summary = summarize(
+    updated_summary = await summarize(
         previous_summary=previous_summary,
         messages=message_list,
     )
 
-    mm.save_summary(
+    await mm.save_summary(
         user_id=inp,
         summary=updated_summary,
     )
 
-    mm.update_summary_track(
+    await mm.update_summary_track(
         user_id=inp,
         message_id=last_message_id,
     )
-
-    print("Summary updated successfully.")

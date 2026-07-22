@@ -5,41 +5,46 @@ from ..database.MemoryManager import MemoryManager
 
 from .merge_merge_unique import merge
 
-
+from fastapi import HTTPException
 
 db = SQLiteDB()
 um = UserManager(db)
 mm = MemoryManager(db)
 
-inp = input("User Id : ")
-if not um.user_exists(inp):
-    print("User Does not exists")
-else:
-    profile_track_id = mm.get_profile_track(user_id = inp)
 
-    message_list = mm.get_messages_after(
-        user_id=inp,
-        message_id=profile_track_id,
-    )
+async def extractor_routine(user_id):
+    inp = user_id
+    if not inp.strip():
+        raise HTTPException(status_code=400, detail="User ID cannot be empty")
+    if not await um.user_exists(inp):
+        raise HTTPException(status_code=404, detail="User does not exist")
+    else:
+        profile_track_id = await mm.get_profile_track(user_id=inp)
 
-    last_message_id = mm.get_last_msg_id(inp)
+        message_list = await mm.get_messages_after(
+            user_id=inp,
+            message_id=profile_track_id,
+        )
+        if not message_list:
+            return
 
-    new_profile = extract_user_profile(message_list)
+        last_message_id = await mm.get_last_msg_id(inp)
 
-    stored_profile = mm.get_latest_profile(inp)
-    print(new_profile,stored_profile)
-    merge(
-        stored_profile,
-        new_profile,
-    )
-    print()
+        new_profile = await extract_user_profile(message_list)
 
-    mm.save_profile(
-        user_id=inp,
-        profile=stored_profile,
-    )
+        stored_profile = await mm.get_latest_profile(inp)
 
-    mm.update_profile_track(
-        user_id=inp,
-        message_id=last_message_id,
-    )
+        merge(
+            stored_profile,
+            new_profile,
+        )
+
+        await mm.save_profile(
+            user_id=inp,
+            profile=stored_profile,
+        )
+
+        await mm.update_profile_track(
+            user_id=inp,
+            message_id=last_message_id,
+        )

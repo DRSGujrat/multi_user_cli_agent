@@ -7,6 +7,7 @@ from langchain_core.messages import (
 )
 from langchain_core.output_parsers import StrOutputParser
 
+from fastapi import HTTPException
 from ..models.model import model
 
 
@@ -52,7 +53,7 @@ Return only the updated summary.
 parser = StrOutputParser()
 
 
-def summarize(
+async def summarize(
     previous_summary: str,
     messages: list[BaseMessage],
 ) -> str:
@@ -76,7 +77,6 @@ def summarize(
     filtered_messages = []
 
     for message in messages:
-
         # Ignore empty messages
         if not str(message.content).strip():
             continue
@@ -97,17 +97,14 @@ def summarize(
 
     prompt = [
         SystemMessage(content=SUMMARIZER_SYSTEM_PROMPT),
-
         SystemMessage(
             content=f"""
-Previous Conversation Summary:
+            Previous Conversation Summary:
 
-{previous_summary if previous_summary else "No previous summary available."}
-"""
+            {previous_summary if previous_summary else "No previous summary available."}
+        """
         ),
-
         *filtered_messages,
-
         HumanMessage(
             content=(
                 "Update the previous summary using the new conversation. "
@@ -115,7 +112,9 @@ Previous Conversation Summary:
             )
         ),
     ]
-
-    response = model.invoke(prompt)
+    try:
+        response = await model.ainvoke(prompt)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"LLM error : {e}")
 
     return parser.invoke(response).strip()

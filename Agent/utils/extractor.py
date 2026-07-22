@@ -7,7 +7,8 @@ from langchain_core.messages import (
 )
 
 from ..models.model import model
-from ..classes.UserProfile import UserProfileSchema,UserProfile
+from ..classes.UserProfile import UserProfileSchema
+from fastapi import HTTPException
 
 PROFILE_EXTRACTOR_SYSTEM_PROMPT = """You are an expert user profile extraction system.
 
@@ -36,7 +37,7 @@ The profile should represent long-term knowledge that would remain useful in fut
 structured_model = model.with_structured_output(UserProfileSchema)
 
 
-def extract_user_profile(
+async def extract_user_profile(
     messages: list[BaseMessage],
 ) -> UserProfileSchema:
     """
@@ -56,7 +57,6 @@ def extract_user_profile(
     filtered_messages: list[BaseMessage] = []
 
     for message in messages:
-
         # Ignore empty messages
         if not str(message.content).strip():
             continue
@@ -85,9 +85,8 @@ def extract_user_profile(
             )
         ),
     ]
-    
-    return structured_model.invoke(prompt)
-
-
-
-
+    try:
+        response = structured_model.invoke(prompt)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"LLM error : {e}")
+    return response

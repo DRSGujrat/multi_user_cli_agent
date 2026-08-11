@@ -21,9 +21,10 @@ This project is a FastAPI-based LangChain conversational agent that stores users
 
 2. Activate the virtual environment.
 
-   On Windows PowerShell:
+   On VSCODE PowerShell:
    ```powershell
-   venv\Scripts\Activate.ps1
+   venv\Scripts
+   .\Activate.ps1
    ```
 
 3. Install dependencies.

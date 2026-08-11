@@ -1,27 +1,25 @@
 # This file is for testinn purposes only
 
-from .database.UserManager import UserManager
-from .database.MemoryManager import MemoryManager
-from .database.UserDBSchema import SQLiteDB
-from langchain_core.messages import AIMessage, HumanMessage,SystemMessage
-from .database.SessionManager import SessionManager
+from Agent.database.UserManager import UserManager
+from Agent.database.MemoryManager import MemoryManager
+from Agent.database.UserDBSchema import SQLiteDB
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from Agent.database.SessionManager import SessionManager
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from .models.model import model
+from Agent.models.model import model
 from langchain_core.output_parsers import StrOutputParser
-from .utils.summarizer import summarize
-from .classes.UserProfile import UserProfile
-
+from Agent.utils.summarizer import summarize
+from Agent.classes.UserProfile import UserProfile
 
 
 db = SQLiteDB()
 um = UserManager(db)
 mm = MemoryManager(db)
-sm = SessionManager(um,mm)
+sm = SessionManager(um, mm)
 parser = StrOutputParser()
 
 
-
-inp = 'test'
+inp = "test"
 # msg_id = mm.get_last_msg_id(inp)
 
 # print(msg_id)
@@ -45,5 +43,4 @@ inp = 'test'
 # profile = mm.get_latest_profile(user_id = inp)
 # print(profile)
 
-mm.delete_latest_profile(user_id = inp)
-
+mm.delete_latest_profile(user_id=inp)

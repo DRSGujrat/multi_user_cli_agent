@@ -1,4 +1,5 @@
 import json
+import asyncio
 
 from langchain_core.messages import (
     AIMessage,
@@ -6,8 +7,8 @@ from langchain_core.messages import (
     BaseMessage,
 )
 
-from ..classes.UserProfile import UserProfile, UserProfileSchema
-from .UserDBSchema import SQLiteDB
+from Agent.classes.UserProfile import UserProfile, UserProfileSchema
+from Agent.database.UserDBSchema import SQLiteDB
 
 
 class MemoryManager:

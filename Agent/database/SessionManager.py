@@ -1,6 +1,6 @@
-from ..classes.session import Session
-from .UserManager import UserManager
-from .MemoryManager import MemoryManager
+from Agent.classes.session import Session
+from Agent.database.MemoryManager import MemoryManager
+from Agent.database.UserManager import UserManager
 
 
 class SessionManager:
@@ -16,16 +16,12 @@ class SessionManager:
         self.user_manager = user_manager
         self.memory_manager = memory_manager
 
-    def load_session(
-        self,
-        user_id: str
-    
-    ) -> Session:
+    def load_session(self, user_id: str) -> Session:
         """
         Creates a Session object for a user.
         """
-        
-        session_id = self.memory_manager.get_session_id(user_id) +1
+
+        session_id = self.memory_manager.get_session_id(user_id) + 1
         summary = self.memory_manager.get_latest_summary(user_id)
         summary_text = []
         for summ in summary:
@@ -39,14 +35,12 @@ class SessionManager:
             user_id=user_id,
             n=10,
         )
-        
 
         return Session(
             session_id=session_id,
             conversation_summary=summary_text,
             recent_messages=messages,
             profile=profile,
-            
         )
 
     def append_message(
@@ -84,5 +78,3 @@ class SessionManager:
         """
 
         session.profile = profile
-
-    

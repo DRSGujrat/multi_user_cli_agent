@@ -1,4 +1,4 @@
-from .UserDBSchema import SQLiteDB
+from Agent.database.UserDBSchema import SQLiteDB
 
 
 class UserManager:
@@ -17,8 +17,6 @@ class UserManager:
         Returns False if already exists.
         """
 
-        
-
         if self.user_exists(user_id):
             return False
 
@@ -27,14 +25,14 @@ class UserManager:
             INSERT INTO users(user_id)
             VALUES(?)
             """,
-            (user_id,)
+            (user_id,),
         )
         self.db.cursor.execute(
             """
             INSERT INTO memory_tracker(user_id)
             VALUES (?)
             """,
-            (user_id,)
+            (user_id,),
         )
         self.db.commit()
 
@@ -53,7 +51,7 @@ class UserManager:
             DELETE FROM users
             WHERE user_id = ?
             """,
-            (user_id,)
+            (user_id,),
         )
 
         deleted = self.db.cursor.rowcount
@@ -73,7 +71,7 @@ class UserManager:
             FROM users
             WHERE user_id = ?
             """,
-            (user_id,)
+            (user_id,),
         )
 
         return self.db.cursor.fetchone() is not None
@@ -91,14 +89,9 @@ class UserManager:
         )
 
         return [row[0] for row in self.db.cursor.fetchall()]
-    
- 
+
     def delete_all_users(self):
         users = self.get_all_users()
 
-        
         for u in users:
-
             self.delete_user(u)
-            
-

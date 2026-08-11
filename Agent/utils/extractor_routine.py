@@ -1,9 +1,9 @@
-from .extractor import extract_user_profile
-from ..database.UserDBSchema import SQLiteDB
-from ..database.UserManager import UserManager
-from ..database.MemoryManager import MemoryManager
+from Agent.utils.extractor import extract_user_profile
+from Agent.database.UserDBSchema import SQLiteDB
+from Agent.database.UserManager import UserManager
+from Agent.database.MemoryManager import MemoryManager
 
-from .merge_merge_unique import merge
+from Agent.utils.merge_merge_unique import merge
 
 from fastapi import HTTPException
 

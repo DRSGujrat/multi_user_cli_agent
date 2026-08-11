@@ -8,7 +8,7 @@ from langchain_core.messages import (
 from langchain_core.output_parsers import StrOutputParser
 
 from fastapi import HTTPException
-from ..models.model import model
+from Agent.models.model import model
 
 
 SUMMARIZER_SYSTEM_PROMPT = """
@@ -53,7 +53,7 @@ Return only the updated summary.
 parser = StrOutputParser()
 
 
-async def summarize(
+def summarize(
     previous_summary: str,
     messages: list[BaseMessage],
 ) -> str:
@@ -113,7 +113,7 @@ async def summarize(
         ),
     ]
     try:
-        response = await model.ainvoke(prompt)
+        response = model.invoke(prompt)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"LLM error : {e}")
 

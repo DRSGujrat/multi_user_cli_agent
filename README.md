@@ -16,14 +16,14 @@ This project is a FastAPI-based LangChain conversational agent that stores users
 
    Example:
    ```powershell
-   python -m venv d:\VSCODE\LangChain_Agent\venv
+   python -m venv d:\VSCODE\multi_user_cli_agent\venv
    ```
 
 2. Activate the virtual environment.
 
    On Windows PowerShell:
    ```powershell
-   d:\VSCODE\LangChain_Agent\venv\Scripts\Activate.ps1
+   d:\VSCODE\multi_user_cli_agent\venv\Scripts\Activate.ps1
    ```
 
 3. Install dependencies.

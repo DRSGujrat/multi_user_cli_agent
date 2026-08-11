@@ -6,7 +6,7 @@ from langchain_core.messages import (
     BaseMessage,
 )
 
-from ..classes.UserProfile import UserProfileSchema
+from Agent.classes.UserProfile import UserProfileSchema
 
 
 class Serializer:
@@ -32,9 +32,7 @@ class Serializer:
         if isinstance(message, AIMessage):
             return "ai", message.content
 
-        raise ValueError(
-            f"Unsupported message type: {type(message)}"
-        )
+        raise ValueError(f"Unsupported message type: {type(message)}")
 
     @staticmethod
     def db_to_message(
@@ -52,23 +50,16 @@ class Serializer:
         if role == "ai":
             return AIMessage(content=content)
 
-        raise ValueError(
-            f"Unknown role: {role}"
-        )
+        raise ValueError(f"Unknown role: {role}")
 
     @staticmethod
-    def rows_to_messages(
-        rows: list[tuple[str, str]]
-    ) -> list[BaseMessage]:
+    def rows_to_messages(rows: list[tuple[str, str]]) -> list[BaseMessage]:
         """
         Converts multiple database rows into
         LangChain messages.
         """
 
-        return [
-            Serializer.db_to_message(role, content)
-            for role, content in rows
-        ]
+        return [Serializer.db_to_message(role, content) for role, content in rows]
 
     # =====================================================
     # Profile
@@ -93,6 +84,4 @@ class Serializer:
         a UserProfileSchema.
         """
 
-        return UserProfileSchema.model_validate(
-            json.loads(profile_json)
-        )
+        return UserProfileSchema.model_validate(json.loads(profile_json))

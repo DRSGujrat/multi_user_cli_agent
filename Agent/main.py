@@ -1,15 +1,17 @@
-from Agent.database.UserManager import UserManager
-from Agent.database.MemoryManager import MemoryManager
-from Agent.database.UserDBSchema import SQLiteDB
-from langchain_core.messages import AIMessage, HumanMessage
-from Agent.database.SessionManager import SessionManager
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from Agent.models.model import model
-from langchain_core.output_parsers import StrOutputParser
-from Agent.utils.summarizer import summarize
-from fastapi import FastAPI, HTTPException
 import asyncio
 import time
+
+from fastapi import FastAPI, HTTPException
+from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+
+from Agent.database.MemoryManager import MemoryManager
+from Agent.database.SessionManager import SessionManager
+from Agent.database.UserDBSchema import SQLiteDB
+from Agent.database.UserManager import UserManager
+from Agent.models.model import model
+from Agent.utils.summarizer import summarize
 
 app = FastAPI()
 
@@ -29,7 +31,7 @@ async def chat(username: str, user_query: str):
         raise HTTPException(status_code=400, detail="User name cannot be empty")
 
     if not um.user_exists(inp):
-        await um.create_user(inp)
+        status = await um.create_user(inp)
 
     session = sm.load_session(inp)
 
@@ -71,37 +73,37 @@ async def chat(username: str, user_query: str):
     llm_end = time.perf_counter()
     sm.append_message(session, AIMessage(content=output))
 
-    # ---------------- SUMMARY ---------------- #
+    # # ---------------- SUMMARY ---------------- #
 
-    if len(session.new_messages) >= 10:
-        # Combine old short-term memory and current conversation
-        summary_content = session.recent_messages + session.new_messages
+    # if len(session.new_messages) >= 10:
+    #     # Combine old short-term memory and current conversation
+    #     summary_content = session.recent_messages + session.new_messages
 
-        # Update summary using previous summary + new conversation
+    #     # Update summary using previous summary + new conversation
 
-        summary = asyncio.create_task(
-            summarize(
-                previous_summary=session.conversation_summary,
-                messages=summary_content,
-            )
-        )
-        session.conversation_summary = await summary
-        await mm.save_summary(user_id=inp, summary=session.conversation_summary)
+    #     summary = asyncio.create_task(
+    #         summarize(
+    #             previous_summary=session.conversation_summary,
+    #             messages=summary_content,
+    #         )
+    #     )
+    #     session.conversation_summary = await summary
+    #     await mm.save_summary(user_id=inp, summary=session.conversation_summary)
 
-        await mm.add_all_messages(
-            session_id=session.session_id,
-            user_id=inp,
-            message_list=session.new_messages,
-        )
+    mm.add_all_messages(
+        session_id=session.session_id,
+        user_id=inp,
+        message_list=session.new_messages,
+    )
 
-        msg_id = await mm.get_last_msg_id(inp)
+    #     msg_id = await mm.get_last_msg_id(inp)
 
-        await mm.update_summary_track(user_id=inp, message_id=msg_id)
+    #     await mm.update_summary_track(user_id=inp, message_id=msg_id)
 
-        # New conversation becomes the next short-term memory
-        session.recent_messages = session.new_messages.copy()
+    #     # New conversation becomes the next short-term memory
+    #     session.recent_messages = session.new_messages.copy()
 
-        session.new_messages.clear()
+    #     session.new_messages.clear()
     end = time.perf_counter()
     print(f"Start to end Latency : {end - start:.3f} sec")
     print(f"LLM Latency: {llm_end - llm_start:.3f} sec")

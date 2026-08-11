@@ -6,8 +6,8 @@ from langchain_core.messages import (
     ToolMessage,
 )
 
-from ..models.model import model
-from ..classes.UserProfile import UserProfileSchema
+from Agent.models.model import model
+from Agent.classes.UserProfile import UserProfileSchema
 from fastapi import HTTPException
 
 PROFILE_EXTRACTOR_SYSTEM_PROMPT = """You are an expert user profile extraction system.

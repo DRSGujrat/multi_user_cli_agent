@@ -1,5 +1,5 @@
 import sqlite3
-from ..config import DATABASE_DIR
+from Agent.config import DATABASE_DIR
 
 
 class SQLiteDB:
@@ -9,7 +9,7 @@ class SQLiteDB:
     """
 
     def __init__(self, db_path: str = "database.db"):
-        
+
         self.conn = sqlite3.connect(db_path)
         self.conn.execute("PRAGMA foreign_keys = ON")
         self.cursor = self.conn.cursor()

@@ -37,7 +37,7 @@ The profile should represent long-term knowledge that would remain useful in fut
 structured_model = model.with_structured_output(UserProfileSchema)
 
 
-async def extract_user_profile(
+def extract_user_profile(
     messages: list[BaseMessage],
 ) -> UserProfileSchema:
     """

@@ -31,7 +31,7 @@ async def chat(username: str, user_query: str):
         raise HTTPException(status_code=400, detail="User name cannot be empty")
 
     if not um.user_exists(inp):
-        status = await um.create_user(inp)
+        um.create_user(inp)
 
     session = sm.load_session(inp)
 
